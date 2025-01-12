@@ -47,13 +47,16 @@
 	<true/>
 
 	<key>NSMotionUsageDescription</key>
-	<string>Ứng dụng cần quyền truy cập vào cảm biến chuyển động để đếm số bước chân của bạn</string>
+	<string>The application requires access to the motion sensor to count your steps.</string>
 
 	<key>UIBackgroundModes</key>
 	<array>
     	<string>processing</string>
     	<string>fetch</string>
 	</array>
+
+	<key>io.flutter.embedded_views_preview</key>
+	<true/>
 	
 </dict>
 </plist>

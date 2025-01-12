@@ -111,7 +111,7 @@ class HomePageState extends State<HomePage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.directions_walk),
-            label: 'Pedometer',
+            label: 'Step Counter',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.alarm),
