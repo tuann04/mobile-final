@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'screens/step_counter_screen.dart';
-import 'screens/tuan.dart';
-import 'screens/nguyen.dart';
-import 'screens/hieu.dart';
+import 'package:health_app/view_models/step_counter_view_model.dart';
+import 'views/pages/step_counter_screen.dart';
+import 'views/pages/tuan.dart';
+import 'views/pages/nguyen.dart';
+import 'views/pages/hieu.dart';
+
+final StepCounterViewModel stepCounterViewModel = StepCounterViewModel();
 
 void main() {
   runApp(MyApp());
@@ -85,7 +88,8 @@ class HomePageState extends State<HomePage> {
 
   final List<Widget> _screens = [
     TuanScreen(key: ValueKey('tuan_screen')),
-    StepCounterScreen(),
+    StepCounterScreen(
+        key: ValueKey('step_counter_screen'), viewModel: stepCounterViewModel),
     NguyenScreen(key: ValueKey('nguyen_screen')),
     HieuScreen(key: ValueKey('hieu_screen')),
   ];

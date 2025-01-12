@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:health_app/models/step_data.dart';
+import 'package:health_app/view_models/step_counter_view_model.dart';
 import 'package:pedometer/pedometer.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 
 class StepCounterScreen extends StatefulWidget {
+  final StepCounterViewModel viewModel;
+
+  StepCounterScreen({required Key key, required this.viewModel})
+      : super(key: key);
+
   @override
   StepCounterScreenState createState() => StepCounterScreenState();
 }
@@ -15,74 +21,21 @@ class StepCounterScreenState extends State<StepCounterScreen> {
   int _steps = 0;
   int _initialSteps = 0;
   bool _isInitialized = false;
+  late StepData _todayStepData;
 
   @override
   void initState() {
     super.initState();
     initPlatformState();
-    loadSavedSteps().then((_) {
-      initPlatformState();
+    initTodaySteps();
+  }
+
+  Future<void> initTodaySteps() async {
+    _todayStepData = await widget.viewModel.loadTodaySteps();
+    setState(() {
+      _steps = _todayStepData.steps;
     });
   }
-
-  // void loadSavedSteps() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   setState(() {
-  //     _initialSteps = prefs.getInt('initialSteps') ?? 0;
-  //     _steps = prefs.getInt('steps') ?? 0;
-  //   });
-  // }
-
-  Future<void> loadSavedSteps() async {
-    final prefs = await SharedPreferences.getInstance();
-    // Thêm key để track ngày
-    final String today = DateTime.now().toIso8601String().split('T')[0];
-    final String savedDate = prefs.getString('step_date') ?? '';
-
-    if (today != savedDate) {
-      // Ngày mới - reset số bước
-      setState(() {
-        _steps = 0;
-        _initialSteps = 0;
-        _isInitialized = false;
-      });
-      await prefs.setString('step_date', today);
-    } else {
-      // Cùng ngày - load số bước đã lưu
-      setState(() {
-        _initialSteps = prefs.getInt('initialSteps') ?? 0;
-        _steps = prefs.getInt('steps') ?? 0;
-        _isInitialized = prefs.getBool('isInitialized') ?? false;
-      });
-    }
-  }
-
-  // void saveSteps() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   await prefs.setInt('steps', _steps);
-  //   await prefs.setInt('initialSteps', _initialSteps);
-  // }
-
-  Future<void> saveSteps() async {
-    final prefs = await SharedPreferences.getInstance();
-    final String today = DateTime.now().toIso8601String().split('T')[0];
-
-    await prefs.setString('step_date', today);
-    await prefs.setInt('steps', _steps);
-    await prefs.setInt('initialSteps', _initialSteps);
-    await prefs.setBool('isInitialized', _isInitialized);
-  }
-
-  // void onStepCount(StepCount event) {
-  //   setState(() {
-  //     if (!_isInitialized) {
-  //       _initialSteps = event.steps;
-  //       _isInitialized = true;
-  //     }
-  //     _steps = event.steps - _initialSteps;
-  //   });
-  //   saveSteps();
-  // }
 
   void onStepCount(StepCount event) {
     setState(() {
@@ -92,27 +45,16 @@ class StepCounterScreenState extends State<StepCounterScreen> {
       }
       _steps = event.steps - _initialSteps;
     });
-    // Lưu ngay sau khi cập nhật
-    saveSteps();
   }
 
-  // void resetSteps() {
+  // void resetSteps() async {
   //   setState(() {
   //     _steps = 0;
+  //     _initialSteps = 0;
   //     _isInitialized = false;
   //   });
-  //   saveSteps();
+  //   await widget.viewModel.resetSteps();
   // }
-
-  void resetSteps() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _steps = 0;
-      _initialSteps = 0;
-      _isInitialized = false;
-    });
-    await saveSteps();
-  }
 
   void onPedestrianStatusChanged(PedestrianStatus event) {
     setState(() {
@@ -196,7 +138,11 @@ class StepCounterScreenState extends State<StepCounterScreen> {
             ),
             SizedBox(height: 30),
             ElevatedButton(
-              onPressed: resetSteps,
+              // onPressed: resetSteps,
+              onPressed: () {
+                // Xóa bảng
+                widget.viewModel.deleteTable();
+              },
               child: Text('Reset'),
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
@@ -206,5 +152,12 @@ class StepCounterScreenState extends State<StepCounterScreen> {
         ),
       ),
     );
+  }
+
+  // on dispose
+  @override
+  void dispose() {
+    super.dispose();
+    widget.viewModel.saveTodaySteps(_steps);
   }
 }

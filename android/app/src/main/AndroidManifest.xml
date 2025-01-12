@@ -16,7 +16,7 @@
         android:exported="false"/>
 
     <application
-        android:label="official_project"
+        android:label="health_app"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
