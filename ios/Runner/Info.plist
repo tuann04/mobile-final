@@ -45,5 +45,15 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+
+	<key>NSMotionUsageDescription</key>
+	<string>Ứng dụng cần quyền truy cập vào cảm biến chuyển động để đếm số bước chân của bạn</string>
+
+	<key>UIBackgroundModes</key>
+	<array>
+    	<string>processing</string>
+    	<string>fetch</string>
+	</array>
+	
 </dict>
 </plist>

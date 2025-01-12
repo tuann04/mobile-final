@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/tan.dart';
+import 'screens/step_counter_screen.dart';
 import 'screens/tuan.dart';
 import 'screens/nguyen.dart';
 import 'screens/hieu.dart';
@@ -85,7 +85,7 @@ class HomePageState extends State<HomePage> {
 
   final List<Widget> _screens = [
     TuanScreen(key: ValueKey('tuan_screen')),
-    TanScreen(key: ValueKey('tan_screen')),
+    StepCounterScreen(),
     NguyenScreen(key: ValueKey('nguyen_screen')),
     HieuScreen(key: ValueKey('hieu_screen')),
   ];
@@ -111,7 +111,7 @@ class HomePageState extends State<HomePage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.directions_walk),
-            label: 'Buoc chan',
+            label: 'Pedometer',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.alarm),
