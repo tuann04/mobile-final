@@ -1,6 +1,22 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Quyền cho pedometer -->
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <!-- Quyền cho Android 10 (API level 29) trở lên -->
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
+
+    <!-- Nếu muốn app chạy background -->
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+
+    <service
+        android:name="com.example.app.StepCounterService"
+        android:foregroundServiceType="location"
+        android:enabled="true"
+        android:exported="false"/>
+
     <application
-        android:label="official_project"
+        android:label="health_app"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
