@@ -8,30 +8,30 @@ import 'package:logger/logger.dart';
 
 final logger = Logger();
 
-class StepCounterViewModel extends Model {
+class StepCounterViewModel extends ChangeNotifier {
   final StepCounterRepository _repository = StepCounterRepository.instance;
 
   // State variables
-  StepData? _todayStepData;
-  StepData? get todaySteps => _todayStepData;
+  StepData _todayStepData = StepData(id: '', steps: 0, date: DateTime.now());
+  StepData get todaySteps => _todayStepData;
 
-  List<StepData>? _monthlySteps = [];
-  List<StepData>? get monthlySteps => _monthlySteps;
+  List<StepData> _weeklySteps = [];
+  List<StepData> get weeklySteps => _weeklySteps;
 
-  Map<int, int>? _yearlySteps = {};
-  Map<int, int>? get yearlySteps => _yearlySteps;
+  List<StepData> _monthlySteps = [];
+  List<StepData> get monthlySteps => _monthlySteps;
+
+  Map<int, int> _yearlySteps = {};
+  Map<int, int> get yearlySteps => _yearlySteps;
 
   StepCounterViewModel() {
-    fetchStepData();
+    fetchTodaySteps();
+    fetchWeeklySteps();
+    fetchMonthlySteps(DateTime.now().year, DateTime.now().month);
+    fetchYearlySteps(DateTime.now().year);
   }
 
-  void fetchStepData() async {
-    loadTodaySteps();
-    loadMonthlySteps(DateTime.now().year, DateTime.now().month);
-    loadYearlySteps(DateTime.now().year);
-  }
-
-  Future<void> saveTodaySteps(int steps) async {
+  saveTodaySteps(int steps) async {
     final now = DateTime.now();
     final stepData = StepData(
       id: now.toIso8601String().substring(0, 10),
@@ -42,20 +42,35 @@ class StepCounterViewModel extends Model {
   }
 
   // Lấy số bước trong ngày
-  Future<void> loadTodaySteps() async {
+  fetchTodaySteps() async {
     _todayStepData = await _repository.getTodaySteps();
     notifyListeners();
   }
 
+  // Lấy dữ liệu trong tuần, trả về List<StepData>
+  fetchWeeklySteps() async {
+    _weeklySteps = await _repository.getWeeklySteps();
+    notifyListeners();
+  }
+
   // Lấy dữ liệu trong tháng, trả về List<StepData>
-  Future<void> loadMonthlySteps(int year, int month) async {
+  fetchMonthlySteps(int year, int month) async {
     _monthlySteps = await _repository.getMonthlySteps(year, month);
     notifyListeners();
   }
 
   // Lấy dữ liệu trong năm, trả về Map<int, int>
-  Future<void> loadYearlySteps(int year) async {
+  fetchYearlySteps(int year) async {
     _yearlySteps = await _repository.getYearlySteps(year);
     notifyListeners();
+  }
+
+  // Xóa bảng
+  deleteTable() async {
+    await _repository.deleteTable();
+    fetchTodaySteps();
+    fetchWeeklySteps();
+    fetchMonthlySteps(DateTime.now().year, DateTime.now().month);
+    fetchYearlySteps(DateTime.now().year);
   }
 }

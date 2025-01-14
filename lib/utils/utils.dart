@@ -1,3 +1,5 @@
+import 'package:flutter/services.dart' show rootBundle;
+
 String getMonthName(int month) {
   const months = [
     'Jan',
@@ -14,4 +16,8 @@ String getMonthName(int month) {
     'Dec'
   ];
   return months[month];
+}
+
+Future<String> loadSqlFile(String path) async {
+  return await rootBundle.loadString(path);
 }

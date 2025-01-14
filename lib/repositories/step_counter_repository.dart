@@ -19,6 +19,8 @@ class StepCounterRepository {
       data.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
+
+    logger.i('Saved steps: ${data.steps}');
   }
 
   // Lấy số bước trong ngày
@@ -31,14 +33,54 @@ class StepCounterRepository {
     );
 
     if (maps.isNotEmpty) {
+      logger.i('Today steps: ${maps.first['steps']}');
       return StepData.fromMap(maps.first);
     } else {
+      logger.i('No steps today');
       return StepData(
         id: DateTime.now().toIso8601String(),
         steps: 0,
         date: DateTime.now(),
       );
     }
+  }
+
+  // Lấy số bước trong tuần
+  Future<List<StepData>> getWeeklySteps() async {
+    // Lấy ngày đầu tuần (thứ 2)
+    final db = await database;
+    final now = DateTime.now();
+    final dayOfWeek = now.weekday;
+    final startDate = now.subtract(Duration(days: dayOfWeek - 1));
+    final endDate = startDate.add(Duration(days: 6));
+
+    final List<Map<String, dynamic>> maps = await db.query(
+      'STEPS',
+      where: "date BETWEEN ? AND ?",
+      whereArgs: [
+        startDate.toIso8601String().split('T')[0],
+        endDate.toIso8601String().split('T')[0],
+      ],
+      orderBy: "date ASC",
+    );
+
+    // Tạo list đủ 7 ngày, điền 0 cho ngày chưa có data
+    List<StepData> weeklySteps = List.generate(7, (index) {
+      final date = startDate.add(Duration(days: index));
+      final mapEntry = maps.firstWhere(
+        (map) => map['date'] == date.toIso8601String().split('T')[0],
+        orElse: () => {
+          'id': -1,
+          'date': date.toIso8601String().split('T')[0],
+          'time': 0,
+          'steps': 0,
+          'goal_achieved': 0,
+        },
+      );
+      return StepData.fromMap(mapEntry);
+    });
+
+    return weeklySteps;
   }
 
   // Lấy số bước trong tháng
@@ -73,25 +115,8 @@ class StepCounterRepository {
   // Xóa bảng
   Future<void> deleteTable() async {
     Database? db = await database;
-    await db.delete('STEPS');
+    await db.delete('steps');
     db = null;
-    logger.i('Deleted table steps');
-  }
-
-  // recreate table
-  Future<void> recreateTable() async {
-    Database? db = await database;
-    await db.execute('DROP TABLE IF EXISTS STEPS');
-    await db.execute('''
-      CREATE TABLE STEPS (
-        id TEXT PRIMARY KEY,
-        steps INTEGER NOT NULL,
-        date TEXT NOT NULL,
-        distance REAL,
-        calories REAL
-      )
-    ''');
-    db = null;
-    logger.i('Recreated table steps');
+    logger.d('Deleted table steps');
   }
 }

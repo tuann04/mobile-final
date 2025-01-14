@@ -1,14 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:health_app/view_models/step_counter_view_model.dart';
+import 'package:provider/provider.dart';
 import 'views/pages/step_counter_screen.dart';
 import 'views/pages/tuan.dart';
 import 'views/pages/nguyen.dart';
 import 'views/pages/hieu.dart';
+// import logger
+import 'package:logger/logger.dart';
 
-final StepCounterViewModel stepCounterViewModel = StepCounterViewModel();
+// Create a logger
+final logger = Logger();
+
+// final StepCounterViewModel stepCounterViewModel = StepCounterViewModel();
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => StepCounterViewModel()),
+        // Thêm các provider khác nếu cần
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -88,8 +102,9 @@ class HomePageState extends State<HomePage> {
 
   final List<Widget> _screens = [
     TuanScreen(key: ValueKey('tuan_screen')),
-    StepCounterScreen(
-        key: ValueKey('step_counter_screen'), viewModel: stepCounterViewModel),
+    Consumer<StepCounterViewModel>(
+      builder: (context, viewModel, child) => StepCounterScreen(),
+    ),
     NguyenScreen(key: ValueKey('nguyen_screen')),
     HieuScreen(key: ValueKey('hieu_screen')),
   ];

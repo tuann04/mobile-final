@@ -2,6 +2,7 @@ class StepData {
   String id;
   int steps;
   DateTime date;
+  int times; // in seconds
   double distance;
   double calories;
 
@@ -9,6 +10,7 @@ class StepData {
     required this.id,
     required this.steps,
     required this.date,
+    this.times = 0,
     this.distance = 0,
     this.calories = 0,
   });
@@ -19,6 +21,7 @@ class StepData {
       'id': id,
       'steps': steps,
       'date': date.toIso8601String().substring(0, 10),
+      'times': times,
       'distance': distance,
       'calories': calories,
     };
@@ -30,8 +33,14 @@ class StepData {
       id: map['id'],
       steps: map['steps'],
       date: DateTime.parse(map['date']),
+      times: map['times'],
       distance: map['distance'],
       calories: map['calories'],
     );
+  }
+
+  @override
+  String toString() {
+    return 'StepData{id: $id, steps: $steps, date: $date, times: $times, distance: $distance, calories: $calories}';
   }
 }
