@@ -12,17 +12,19 @@ class StepCounterRepository {
   Future<Database> database = DatabaseHelper().database;
 
   // Lưu dữ liệu bước chân
-  Future<void> saveSteps(StepData data) async {
+  Future<void> saveStepsData(StepData data) async {
     final db = await database;
     await db.insert(
       'STEPS',
       data.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
+
+    logger.i('Saved steps: ${data.steps}');
   }
 
   // Lấy số bước trong ngày
-  Future<StepData> getTodaySteps() async {
+  Future<StepData> getTodayStepsData() async {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query(
       'STEPS',
@@ -31,18 +33,61 @@ class StepCounterRepository {
     );
 
     if (maps.isNotEmpty) {
+      logger.i('Today steps: ${maps.first['steps']}');
       return StepData.fromMap(maps.first);
     } else {
+      logger.i('No steps today');
       return StepData(
         id: DateTime.now().toIso8601String(),
         steps: 0,
         date: DateTime.now(),
+        duration: 0,
+        distance: 0.0,
+        calories: 0.0,
       );
     }
   }
 
+  // Lấy số bước trong tuần
+  Future<List<StepData>> getWeeklyStepsData() async {
+    // Lấy ngày đầu tuần (thứ 2)
+    final db = await database;
+    final now = DateTime.now();
+    final dayOfWeek = now.weekday;
+    final startDate = now.subtract(Duration(days: dayOfWeek - 1));
+    final endDate = startDate.add(Duration(days: 6));
+
+    final List<Map<String, dynamic>> maps = await db.query(
+      'STEPS',
+      where: "date BETWEEN ? AND ?",
+      whereArgs: [
+        startDate.toIso8601String().split('T')[0],
+        endDate.toIso8601String().split('T')[0],
+      ],
+      orderBy: "date ASC",
+    );
+
+    // Tạo list đủ 7 ngày, điền 0 cho ngày chưa có data
+    List<StepData> weeklyStepsData = List.generate(7, (index) {
+      final date = startDate.add(Duration(days: index));
+      final mapEntry = maps.firstWhere(
+        (map) => map['date'] == date.toIso8601String().split('T')[0],
+        orElse: () => {
+          'id': -1,
+          'date': date.toIso8601String().split('T')[0],
+          'time': 0,
+          'steps': 0,
+          'goal_achieved': 0,
+        },
+      );
+      return StepData.fromMap(mapEntry);
+    });
+
+    return weeklyStepsData;
+  }
+
   // Lấy số bước trong tháng
-  Future<List<StepData>> getMonthlySteps(int year, int month) async {
+  Future<List<StepData>> getMonthlyStepsData(int year, int month) async {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query(
       'STEPS',
@@ -54,7 +99,7 @@ class StepCounterRepository {
   }
 
   // Lấy tổng số bước trong năm theo từng tháng
-  Future<Map<int, int>> getYearlySteps(int year) async {
+  Future<Map<int, int>> getYearlyStepsData(int year) async {
     final db = await database;
     final List<Map<String, dynamic>> result = await db.rawQuery('''
       SELECT strftime('%m', date) as month, SUM(steps) as total
@@ -63,35 +108,18 @@ class StepCounterRepository {
       GROUP BY strftime('%m', date)
     ''', ['$year']);
 
-    Map<int, int> yearlySteps = {};
+    Map<int, int> yearlyStepsData = {};
     for (var row in result) {
-      yearlySteps[int.parse(row['month'])] = row['total'];
+      yearlyStepsData[int.parse(row['month'])] = row['total'];
     }
-    return yearlySteps;
+    return yearlyStepsData;
   }
 
   // Xóa bảng
   Future<void> deleteTable() async {
     Database? db = await database;
-    await db.delete('STEPS');
+    await db.delete('steps');
     db = null;
-    logger.i('Deleted table steps');
-  }
-
-  // recreate table
-  Future<void> recreateTable() async {
-    Database? db = await database;
-    await db.execute('DROP TABLE IF EXISTS STEPS');
-    await db.execute('''
-      CREATE TABLE STEPS (
-        id TEXT PRIMARY KEY,
-        steps INTEGER NOT NULL,
-        date TEXT NOT NULL,
-        distance REAL,
-        calories REAL
-      )
-    ''');
-    db = null;
-    logger.i('Recreated table steps');
+    logger.d('Deleted table steps');
   }
 }

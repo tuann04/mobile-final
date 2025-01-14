@@ -4,6 +4,11 @@ import 'views/pages/step_counter_screen.dart';
 import 'views/pages/tuan.dart';
 import 'views/pages/nguyen.dart';
 import 'views/pages/hieu.dart';
+// import logger
+import 'package:logger/logger.dart';
+
+// Create a logger
+final logger = Logger();
 
 final StepCounterViewModel stepCounterViewModel = StepCounterViewModel();
 
