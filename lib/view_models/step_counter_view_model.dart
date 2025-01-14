@@ -39,6 +39,10 @@ class StepCounterViewModel extends ChangeNotifier {
       date: now,
     );
     await _repository.saveSteps(stepData);
+    fetchTodaySteps();
+    fetchWeeklySteps();
+    fetchMonthlySteps(DateTime.now().year, DateTime.now().month);
+    fetchYearlySteps(DateTime.now().year);
   }
 
   // Lấy số bước trong ngày

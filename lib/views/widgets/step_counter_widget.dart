@@ -8,15 +8,14 @@ import 'package:fl_chart/fl_chart.dart';
 import 'dart:async';
 import 'dart:math' as math;
 import 'package:logger/logger.dart';
-import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 final logger = Logger();
 
 class StepCounterWidget extends StatefulWidget {
-  // final StepData todayStepData;
+  final StepCounterViewModel viewModel;
 
-  const StepCounterWidget({super.key});
+  StepCounterWidget({required this.viewModel});
 
   @override
   StepCounterWidgetState createState() => StepCounterWidgetState();
@@ -30,41 +29,23 @@ class StepCounterWidgetState extends State<StepCounterWidget> {
   int _steps = 0;
   int _initialSteps = 0;
   bool _isInitialized = false;
-  late StepCounterViewModel _viewModel; // Store ViewModel reference
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Safely store reference to ViewModel
-    _viewModel = Provider.of<StepCounterViewModel>(context, listen: false);
-  }
+  late StepData _todayStepData = widget.viewModel.todaySteps;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        final viewModel = context.read<StepCounterViewModel>();
-        setState(() {
-          _steps = viewModel.todaySteps.steps;
-        });
-        initPlatformState();
-      }
-    });
+    _steps = _todayStepData.steps;
+    initPlatformState();
   }
 
   void onStepCount(StepCount event) {
-    if (_isStarted && mounted) {
+    if (_isStarted) {
       setState(() {
         if (!_isInitialized) {
           _initialSteps = event.steps - _steps;
           _isInitialized = true;
         }
         _steps = event.steps - _initialSteps;
-        // Update ViewModel periodically
-        if (mounted) {
-          context.read<StepCounterViewModel>().saveTodaySteps(_steps);
-        }
       });
     }
   }
@@ -78,19 +59,15 @@ class StepCounterWidgetState extends State<StepCounterWidget> {
   // }
 
   void onPedestrianStatusChanged(PedestrianStatus event) {
-    if (mounted) {
-      setState(() {
-        _status = event.status == 'walking' ? 'Walking' : 'Stopped';
-      });
-    }
+    setState(() {
+      _status = event.status == 'walking' ? 'Walking' : 'Stopped';
+    });
   }
 
   void onPedestrianStatusError(error) {
-    if (mounted) {
-      setState(() {
-        _status = 'Unable to detect the status.';
-      });
-    }
+    setState(() {
+      _status = 'Unable to detect the status.';
+    });
   }
 
   void onStepCountError(error) {
@@ -109,83 +86,73 @@ class StepCounterWidgetState extends State<StepCounterWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<StepCounterViewModel>(
-      builder: (context, viewModel, child) {
-        return Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.directions_walk,
-                size: 80,
-                color: Theme.of(context).primaryColor,
-              ),
-              SizedBox(height: 20),
-              Text(
-                '$_steps',
-                style: TextStyle(fontSize: 60, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                'Steps',
-                style: TextStyle(fontSize: 20, color: Colors.grey),
-              ),
-              SizedBox(height: 20),
-              Card(
-                margin: EdgeInsets.symmetric(horizontal: 20),
-                child: Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        _status == 'Walking'
-                            ? Icons.directions_walk
-                            : Icons.accessibility_new,
-                        color:
-                            _status == 'Walking' ? Colors.green : Colors.orange,
-                      ),
-                      SizedBox(width: 10),
-                      Text(
-                        _status,
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    if (_isStarted) {
-                      _isStarted = false;
-                      _isInitialized = false;
-                      // Save steps when stopping
-                      viewModel.saveTodaySteps(_steps);
-                    } else {
-                      _isStarted = true;
-                    }
-                  });
-                },
-                child: Icon(
-                  _isStarted ? Icons.stop : Icons.play_arrow,
-                  size: 40,
-                ),
-              ),
-            ],
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.directions_walk,
+            size: 80,
+            color: Theme.of(context).primaryColor,
           ),
-        );
-      },
+          SizedBox(height: 20),
+          Text(
+            '$_steps',
+            style: TextStyle(fontSize: 60, fontWeight: FontWeight.bold),
+          ),
+          Text(
+            'Steps',
+            style: TextStyle(fontSize: 20, color: Colors.grey),
+          ),
+          SizedBox(height: 20),
+          Card(
+            margin: EdgeInsets.symmetric(horizontal: 20),
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    _status == 'Walking'
+                        ? Icons.directions_walk
+                        : Icons.accessibility_new,
+                    color: _status == 'Walking' ? Colors.green : Colors.orange,
+                  ),
+                  SizedBox(width: 10),
+                  Text(
+                    _status,
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(height: 30),
+          ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  if (_isStarted) {
+                    _isStarted = false;
+                    _isInitialized = false;
+                  } else {
+                    _isStarted = true;
+                  }
+                });
+              },
+              child: Icon(
+                _isStarted ? Icons.stop : Icons.play_arrow,
+                size: 40,
+              )),
+        ],
+      ),
     );
   }
 
   @override
   void dispose() {
-    if (mounted) {
-      context.read<StepCounterViewModel>().saveTodaySteps(_steps);
-      logger.d('Dispose step counter widget steps: $_steps');
-    }
     super.dispose();
+    widget.viewModel.saveTodaySteps(_steps);
+    logger.d('Dispose step counter widget steps: $_steps');
   }
 }
 
@@ -201,14 +168,14 @@ class StepCounterWidgetState extends State<StepCounterWidget> {
 //   @override
 //   void paint(Canvas canvas, Size size) {
 //     final center = Offset(size.width / 2, size.height / 2);
-//     final radius = math.min(size.width / 2, size.height / 2);
+//     final radius = math.min(size.width / 2, size.height / 2) - 30;
 //     final paint = Paint()
 //       ..style = PaintingStyle.stroke
 //       ..strokeWidth = 15
 //       ..strokeCap = StrokeCap.round;
 
 //     // Background circle
-//     paint.color = Colors.grey.withOpacity(0.2);
+//     paint.color = Colors.grey[800]!;
 //     canvas.drawArc(
 //       Rect.fromCircle(center: center, radius: radius),
 //       -math.pi / 2,
