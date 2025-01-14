@@ -1,4 +1,3 @@
-import 'package:health_app/view_models/step_counter_view_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 // logger
@@ -13,13 +12,13 @@ class DatabaseHelper {
   static final tableSteps = 'STEPS';
   // Thêm tên các bảng khác ở đây
 
-  // static final columnId = 'id';
-  // static final columnName = 'name';
-  // static final columnAge = 'age';
-  // static final columnSteps = 'steps';
-  // static final columnDate = 'date';
-  // static final columnDistance = 'distance';
-  // static final columnCalories = 'calories';
+  static final columnId = 'id';
+  static final columnName = 'name';
+  static final columnAge = 'age';
+  static final columnSteps = 'steps';
+  static final columnDate = 'date';
+  static final columnDistance = 'distance';
+  static final columnCalories = 'calories';
   // Thêm các cột khác ở đây
 
   // make this a singleton class
@@ -50,11 +49,11 @@ class DatabaseHelper {
     // Tạo bảng steps
     await db.execute('''
       CREATE TABLE $tableSteps (
-        id TEXT PRIMARY KEY,
-        steps INTEGER NOT NULL,
-        date TEXT NOT NULL,
-        distance REAL,
-        calories REAL
+        $columnId TEXT PRIMARY KEY,
+        $columnSteps INTEGER NOT NULL,
+        $columnDate TEXT NOT NULL,
+        $columnDistance REAL,
+        $columnCalories REAL
       )
     ''');
 

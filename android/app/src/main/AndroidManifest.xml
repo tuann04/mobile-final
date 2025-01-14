@@ -9,12 +9,6 @@
     <!-- Nếu muốn app chạy background -->
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
-    <service
-        android:name="com.example.app.StepCounterService"
-        android:foregroundServiceType="location"
-        android:enabled="true"
-        android:exported="false"/>
-
     <application
         android:label="health_app"
         android:name="${applicationName}"
@@ -46,6 +40,12 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+        <service
+        android:name="com.example.app.StepCounterService"
+        android:foregroundServiceType="location"
+        android:enabled="true"
+        android:exported="false"/>
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

@@ -1,6 +1,5 @@
 import 'package:health_app/db/database_helper.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
 import '../models/step_data.dart';
 import 'package:logger/logger.dart';
 
@@ -20,20 +19,16 @@ class StepCounterRepository {
       data.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
-    logger.i('${data.toMap()}');
   }
 
   // Lấy số bước trong ngày
   Future<StepData> getTodaySteps() async {
-    // log ra database
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query(
       'STEPS',
       where: "date = ?",
       whereArgs: [DateTime.now().toIso8601String().substring(0, 10)],
     );
-
-    logger.i('${maps}');
 
     if (maps.isNotEmpty) {
       return StepData.fromMap(maps.first);
