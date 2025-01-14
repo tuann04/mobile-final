@@ -12,69 +12,69 @@ class StepCounterViewModel extends ChangeNotifier {
   final StepCounterRepository _repository = StepCounterRepository.instance;
 
   // State variables
-  StepData _todayStepData = StepData(id: '', steps: 0, date: DateTime.now());
-  StepData get todaySteps => _todayStepData;
+  StepData _todayStepData = StepData(
+      id: '',
+      steps: 0,
+      date: DateTime.now(),
+      duration: 0,
+      distance: 0.0,
+      calories: 0.0);
+  StepData get todayStepsData => _todayStepData;
 
-  List<StepData> _weeklySteps = [];
-  List<StepData> get weeklySteps => _weeklySteps;
+  List<StepData> _weeklyStepsData = [];
+  List<StepData> get weeklyStepsData => _weeklyStepsData;
 
-  List<StepData> _monthlySteps = [];
-  List<StepData> get monthlySteps => _monthlySteps;
+  List<StepData> _monthlyStepsData = [];
+  List<StepData> get monthlyStepsData => _monthlyStepsData;
 
-  Map<int, int> _yearlySteps = {};
-  Map<int, int> get yearlySteps => _yearlySteps;
+  Map<int, int> _yearlyStepsData = {};
+  Map<int, int> get yearlyStepsData => _yearlyStepsData;
 
   StepCounterViewModel() {
-    fetchTodaySteps();
-    fetchWeeklySteps();
-    fetchMonthlySteps(DateTime.now().year, DateTime.now().month);
-    fetchYearlySteps(DateTime.now().year);
+    fetchTodayStepsData();
+    fetchWeeklyStepsData();
+    fetchMonthlyStepsData(DateTime.now().year, DateTime.now().month);
+    fetchYearlyStepsData(DateTime.now().year);
   }
 
-  saveTodaySteps(int steps) async {
-    final now = DateTime.now();
-    final stepData = StepData(
-      id: now.toIso8601String().substring(0, 10),
-      steps: steps,
-      date: now,
-    );
-    await _repository.saveSteps(stepData);
-    fetchTodaySteps();
-    fetchWeeklySteps();
-    fetchMonthlySteps(DateTime.now().year, DateTime.now().month);
-    fetchYearlySteps(DateTime.now().year);
+  saveTodayStepsData(StepData stepData) async {
+    await _repository.saveStepsData(stepData);
+    fetchTodayStepsData();
+    fetchWeeklyStepsData();
+    fetchMonthlyStepsData(DateTime.now().year, DateTime.now().month);
+    fetchYearlyStepsData(DateTime.now().year);
   }
 
   // Lấy số bước trong ngày
-  fetchTodaySteps() async {
-    _todayStepData = await _repository.getTodaySteps();
+  fetchTodayStepsData() async {
+    _todayStepData = await _repository.getTodayStepsData();
     notifyListeners();
   }
 
   // Lấy dữ liệu trong tuần, trả về List<StepData>
-  fetchWeeklySteps() async {
-    _weeklySteps = await _repository.getWeeklySteps();
+  fetchWeeklyStepsData() async {
+    _weeklyStepsData = await _repository.getWeeklyStepsData();
     notifyListeners();
   }
 
   // Lấy dữ liệu trong tháng, trả về List<StepData>
-  fetchMonthlySteps(int year, int month) async {
-    _monthlySteps = await _repository.getMonthlySteps(year, month);
+  fetchMonthlyStepsData(int year, int month) async {
+    _monthlyStepsData = await _repository.getMonthlyStepsData(year, month);
     notifyListeners();
   }
 
   // Lấy dữ liệu trong năm, trả về Map<int, int>
-  fetchYearlySteps(int year) async {
-    _yearlySteps = await _repository.getYearlySteps(year);
+  fetchYearlyStepsData(int year) async {
+    _yearlyStepsData = await _repository.getYearlyStepsData(year);
     notifyListeners();
   }
 
   // Xóa bảng
   deleteTable() async {
     await _repository.deleteTable();
-    fetchTodaySteps();
-    fetchWeeklySteps();
-    fetchMonthlySteps(DateTime.now().year, DateTime.now().month);
-    fetchYearlySteps(DateTime.now().year);
+    fetchTodayStepsData();
+    fetchWeeklyStepsData();
+    fetchMonthlyStepsData(DateTime.now().year, DateTime.now().month);
+    fetchYearlyStepsData(DateTime.now().year);
   }
 }

@@ -2,7 +2,7 @@ class StepData {
   String id;
   int steps;
   DateTime date;
-  int times; // in seconds
+  int duration; // in seconds
   double distance;
   double calories;
 
@@ -10,9 +10,9 @@ class StepData {
     required this.id,
     required this.steps,
     required this.date,
-    this.times = 0,
-    this.distance = 0,
-    this.calories = 0,
+    required this.duration,
+    required this.distance,
+    required this.calories,
   });
 
   // Use sqlite to store data
@@ -21,7 +21,7 @@ class StepData {
       'id': id,
       'steps': steps,
       'date': date.toIso8601String().substring(0, 10),
-      'times': times,
+      'duration': duration,
       'distance': distance,
       'calories': calories,
     };
@@ -33,7 +33,7 @@ class StepData {
       id: map['id'],
       steps: map['steps'],
       date: DateTime.parse(map['date']),
-      times: map['times'],
+      duration: map['duration'],
       distance: map['distance'],
       calories: map['calories'],
     );
@@ -41,6 +41,6 @@ class StepData {
 
   @override
   String toString() {
-    return 'StepData{id: $id, steps: $steps, date: $date, times: $times, distance: $distance, calories: $calories}';
+    return 'StepData{id: $id, steps: $steps, date: $date, duration: $duration, distance: $distance, calories: $calories}';
   }
 }

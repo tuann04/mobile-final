@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:health_app/models/step_data.dart';
 import 'package:health_app/utils/utils.dart';
 import 'package:health_app/view_models/step_counter_view_model.dart';
+import 'package:health_app/views/widgets/debug_screen.dart';
 import 'package:health_app/views/widgets/step_counter_monthly.dart';
 import 'package:health_app/views/widgets/step_counter_widget.dart';
 import 'package:health_app/views/widgets/step_counter_yearly.dart';
@@ -34,24 +35,31 @@ class StepCounterScreenState extends State<StepCounterScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-    _todayStepData = widget.viewModel.todaySteps;
-    _weeklyStepData = widget.viewModel.weeklySteps;
-    _monthlyStepData = widget.viewModel.monthlySteps;
-    _yearlyStepData = widget.viewModel.yearlySteps;
+    _tabController = TabController(length: 4, vsync: this);
+    _todayStepData = widget.viewModel.todayStepsData;
+    _weeklyStepData = widget.viewModel.weeklyStepsData;
+    _monthlyStepData = widget.viewModel.monthlyStepsData;
+    _yearlyStepData = widget.viewModel.yearlyStepsData;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Step Counter'),
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: [
-            Tab(text: 'Today'),
-            Tab(text: 'Monthly'),
-            Tab(text: 'Yearly'),
+        flexibleSpace: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            TabBar(
+              controller: _tabController,
+              tabs: [
+                Tab(text: 'Today'),
+                Tab(text: 'Monthly'),
+                Tab(text: 'Yearly'),
+                Tab(
+                  text: 'Debug',
+                )
+              ],
+            ),
           ],
         ),
       ),
@@ -66,6 +74,7 @@ class StepCounterScreenState extends State<StepCounterScreen>
             yearlyStepData: _yearlyStepData,
             getMonthName: getMonthName,
           ),
+          DebugScreen()
         ],
       ),
     );
