@@ -30,12 +30,12 @@ class StepData {
   // Use sqlite to retrieve data
   factory StepData.fromMap(Map<String, dynamic> map) {
     return StepData(
-      id: map['id'],
+      id: map['id'].toString(),
       steps: map['steps'],
       date: DateTime.parse(map['date']),
-      duration: map['duration'],
-      distance: map['distance'],
-      calories: map['calories'],
+      duration: map['duration'] ?? 0,
+      distance: map['distance'] ?? 0,
+      calories: map['calories'] ?? 0,
     );
   }
 
