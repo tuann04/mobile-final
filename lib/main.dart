@@ -108,7 +108,8 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _screens[_currentIndex], // Display the selected screen
+      body: SafeArea(
+          child: _screens[_currentIndex]), // Display the selected screen
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed, // Make all items visible
         onTap: onTabTapped,
