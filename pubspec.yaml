@@ -19,6 +19,7 @@ dependencies:
   logger: ^2.5.0
   scoped_model: ^2.0.0
   fl_chart: ^0.70.1
+  flutter_local_notifications: ^9.0.0
 
 dev_dependencies:
   flutter_test:
