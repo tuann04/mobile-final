@@ -117,8 +117,8 @@ class HomePageState extends State<HomePage> {
         currentIndex: _currentIndex,
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.run_circle),
-            label: 'Chay bo',
+            icon: Icon(Icons.directions_run),
+            label: 'Run',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.directions_walk),
@@ -137,3 +137,26 @@ class HomePageState extends State<HomePage> {
     );
   }
 }
+
+// import 'package:flutter/material.dart';
+// import 'package:rive/rive.dart';
+
+// void main() => runApp(MaterialApp(
+//       home: MyRiveAnimation(),
+//     ));
+
+// class MyRiveAnimation extends StatelessWidget {
+//   const MyRiveAnimation({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return const Scaffold(
+//       body: Center(
+//         child: RiveAnimation.asset(
+//           'assets/runner.riv',
+//           fit: BoxFit.cover,
+//         ),
+//       ),
+//     );
+//   }
+// }

@@ -1,8 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:health_app/utils/get_user_location.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:rive/rive.dart';
 
 class TuanScreen extends StatefulWidget {
   const TuanScreen({super.key});
@@ -16,8 +20,10 @@ class _TuanScreenState extends State<TuanScreen> {
   Timer? _locationTimer;
   final List<LatLng> trackedPathPoints = [];
   int displayWarning = 0;
-  int counter = 0;
   bool isTracking = false;
+  bool displayCongrats = false;
+  DateTime? startTime;
+  var riveUrl = 'assets/runner.riv';
 
   @override
   void initState() {
@@ -47,9 +53,16 @@ class _TuanScreenState extends State<TuanScreen> {
 
   void toggleTracking() {
     if (isTracking) {
-      _stopLocationUpdates();
+      stopLocationUpdates();
+      setState(() {
+        displayCongrats = true;
+      });
     } else {
+      trackedPathPoints.clear();
       startLocationUpdates();
+      setState(() {
+        startTime = DateTime.now();
+      });
     }
     setState(() {
       isTracking = !isTracking;
@@ -74,7 +87,7 @@ class _TuanScreenState extends State<TuanScreen> {
     });
   }
 
-  void _stopLocationUpdates() {
+  void stopLocationUpdates() {
     _locationTimer?.cancel();
     setState(() {
       _locationTimer = null;
@@ -112,11 +125,41 @@ class _TuanScreenState extends State<TuanScreen> {
   }
 
   String _formatElapsedTime() {
-    if (_locationTimer == null) return "00:00";
-    final duration = _locationTimer!.tick;
-    final minutes = duration ~/ 60;
-    final seconds = duration % 60;
+    if (startTime == null)
+      return "00:00"; // Return a default value if no start time
+    final duration =
+        DateTime.now().difference(startTime!); // Calculate the difference
+    final minutes = duration.inMinutes;
+    final seconds = duration.inSeconds % 60;
     return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+  }
+
+  double calculatePace() {
+    final totalDistance = calculateTotalDistance();
+    if (startTime == null || totalDistance == 0) return 0;
+    final duration = DateTime.now().difference(startTime!);
+    if (duration.inSeconds > 0) {
+      final pace = duration.inSeconds / totalDistance * 1000;
+      return pace / 60;
+    } else {
+      return 0;
+    }
+  }
+
+  Future<void> lauchSpotify() async {
+    final url = Uri.parse('https://open.spotify.com');
+    if (!await launchUrl(url)) {
+      throw Exception('Could not launch $url');
+    }
+  }
+
+  Future<void> shareRunInfo() async {
+    final totalDistance = calculateTotalDistance();
+    final elapsedTime = _formatElapsedTime();
+    final pace = calculatePace();
+    final message =
+        'I just completed a run! 🏃‍♂️\n\nTotal Distance: ${totalDistance.toStringAsFixed(2)} meters\nTime Elapsed: $elapsedTime\nPace: ${pace.toStringAsFixed(2)} min/km\n\n';
+    await Share.share(message);
   }
 
   @override
@@ -130,13 +173,13 @@ class _TuanScreenState extends State<TuanScreen> {
         body: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // Text(
-            //     'Your location: $currentLocation, Counter: $counter, Warning: $displayWarning'),
             Expanded(
               child: Stack(
                 children: [
                   if (currentLocation == null)
-                    Center(child: CircularProgressIndicator())
+                    Center(
+                        child: RiveAnimation.asset(riveUrl, fit: BoxFit.cover))
+                  // CircularProgressIndicator())
                   else
                     FlutterMap(
                       options: MapOptions(
@@ -149,7 +192,6 @@ class _TuanScreenState extends State<TuanScreen> {
                         TileLayer(
                           urlTemplate:
                               'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png',
-
                           // 'https://tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png',
                           // 'https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.png',
                           // 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -159,7 +201,7 @@ class _TuanScreenState extends State<TuanScreen> {
                           polylines: [
                             Polyline(
                               points: trackedPathPoints,
-                              color: Colors.green,
+                              color: Colors.black,
                               strokeWidth: 5,
                             ),
                           ],
@@ -196,22 +238,24 @@ class _TuanScreenState extends State<TuanScreen> {
                 ],
               ),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   if (isTracking)
                     Column(
                       children: [
                         Text(
-                          'Tracking...',
+                          'Running...',
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 22,
                             fontWeight: FontWeight.bold,
                             color: Colors.green,
                           ),
                         ),
-                        SizedBox(height: 8),
                         Text(
                           'Time Elapsed: ${_formatElapsedTime()}',
-                          style: TextStyle(fontSize: 16),
+                          style: TextStyle(
+                            fontSize: 16,
+                          ),
                         ),
                         SizedBox(height: 8),
                         Text(
@@ -223,28 +267,39 @@ class _TuanScreenState extends State<TuanScreen> {
                   else
                     Column(
                       children: [
-                        Text(
-                          'Not Tracking',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.red,
+                        SizedBox(height: 16),
+                        GestureDetector(
+                          onTap: lauchSpotify,
+                          child: Text(
+                            '🎵 Play Music on Spotify',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.blue,
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          'Press Start to begin tracking your run.',
-                          style: TextStyle(fontSize: 16),
                         ),
                       ],
                     ),
-                  SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: toggleTracking,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: isTracking ? Colors.red : Colors.green,
+                  SizedBox(height: 20),
+                  GestureDetector(
+                    onTap: toggleTracking,
+                    child: Container(
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      decoration: BoxDecoration(
+                        color: isTracking ? Colors.red : Colors.green,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        isTracking ? 'Stop' : 'Start',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
-                    child: Text(isTracking ? 'Stop' : 'Start'),
                   ),
                 ],
               ),
@@ -258,7 +313,7 @@ class _TuanScreenState extends State<TuanScreen> {
           child: AnimatedContainer(
             duration: Duration(milliseconds: 500),
             padding: EdgeInsets.all(16),
-            margin: EdgeInsets.only(top: 20, left: 20, right: 20),
+            margin: EdgeInsets.only(top: 70, left: 20, right: 20),
             decoration: BoxDecoration(
               color:
                   displayWarning == 1 ? Colors.orangeAccent : Colors.redAccent,
@@ -291,7 +346,86 @@ class _TuanScreenState extends State<TuanScreen> {
               ],
             ),
           ),
-        )
+        ),
+      if (displayCongrats)
+        Align(
+          alignment: Alignment.center,
+          child: Container(
+            padding: EdgeInsets.all(20),
+            margin: EdgeInsets.symmetric(horizontal: 10),
+            decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 8,
+                  spreadRadius: 2,
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  '🎉 Congratulations! 🎉',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 16),
+                Text(
+                  'You completed your run!',
+                  style: TextStyle(fontSize: 18),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 12),
+                Text(
+                  '🏃 Total Distance: ${calculateTotalDistance().toStringAsFixed(2)} meters',
+                  style: TextStyle(fontSize: 16),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  '⏱️ Time Elapsed: ${_formatElapsedTime()}',
+                  style: TextStyle(fontSize: 16),
+                ),
+                SizedBox(height: 8),
+                SizedBox(height: 8),
+                Text(
+                  '🏃‍♂️ Pace: ${calculatePace().toStringAsFixed(2)} min/km',
+                  style: TextStyle(fontSize: 16),
+                ),
+                SizedBox(height: 20),
+                ElevatedButton.icon(
+                  onPressed: shareRunInfo,
+                  icon: Icon(Icons.share),
+                  label: Text('Share'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                  ),
+                ),
+                SizedBox(height: 10),
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      displayCongrats = false;
+                    });
+                  },
+                  child: Text(
+                    'Close',
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
     ]);
   }
 }
