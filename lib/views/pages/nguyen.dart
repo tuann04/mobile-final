@@ -28,6 +28,11 @@ class _NguyenScreenState extends State<NguyenScreen> with TickerProviderStateMix
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     _loadScheduledTime();
     _loadSleepStreak();
     _startTimeController.text = TimeOfDay.fromDateTime(drinkStartTime).format(context);
@@ -291,7 +296,7 @@ class _NguyenScreenState extends State<NguyenScreen> with TickerProviderStateMix
                   ],
                 ),
 
-                SizedBox(height: 30),
+                SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _scheduleDrinkNotifications,
                   child: Text('Schedule Drink Notifications', style: TextStyle(fontSize: 14)),
