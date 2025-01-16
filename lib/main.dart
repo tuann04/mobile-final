@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:health_app/view_models/step_counter_view_model.dart';
+import 'package:timezone/data/latest.dart' as tz;
 import 'views/pages/step_counter_screen.dart';
 import 'views/pages/tuan.dart';
 import 'views/pages/nguyen.dart';
 import 'views/pages/hieu.dart';
+import 'services/notify_service.dart';
+import 'services/drink_notify_service.dart';
 // import logger
 import 'package:logger/logger.dart';
 
@@ -13,6 +16,10 @@ final logger = Logger();
 final StepCounterViewModel stepCounterViewModel = StepCounterViewModel();
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  NotificationService().initNotification();
+  DrinkNotificationService().initNotification();
+  tz.initializeTimeZones();
   runApp(MyApp());
 }
 
