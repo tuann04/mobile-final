@@ -19,6 +19,11 @@ dependencies:
   logger: ^2.5.0
   scoped_model: ^2.0.0
   fl_chart: ^0.70.1
+  flutter_local_notifications: ^13.0.0
+  timezone: ^0.9.0
+  flutter_datetime_picker_plus: ^2.0.1
+  fluttertoast: ^8.0.9
+  intl: ^0.18.0
 
 dev_dependencies:
   flutter_test:
