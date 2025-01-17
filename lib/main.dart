@@ -28,6 +28,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
         // More modern, slightly desaturated green:
@@ -115,15 +116,16 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _screens[_currentIndex], // Display the selected screen
+      body: SafeArea(
+          child: _screens[_currentIndex]), // Display the selected screen
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed, // Make all items visible
         onTap: onTabTapped,
         currentIndex: _currentIndex,
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.run_circle),
-            label: 'Chay bo',
+            icon: Icon(Icons.directions_run),
+            label: 'Run',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.directions_walk),
@@ -142,3 +144,26 @@ class HomePageState extends State<HomePage> {
     );
   }
 }
+
+// import 'package:flutter/material.dart';
+// import 'package:rive/rive.dart';
+
+// void main() => runApp(MaterialApp(
+//       home: MyRiveAnimation(),
+//     ));
+
+// class MyRiveAnimation extends StatelessWidget {
+//   const MyRiveAnimation({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return const Scaffold(
+//       body: Center(
+//         child: RiveAnimation.asset(
+//           'assets/runner.riv',
+//           fit: BoxFit.cover,
+//         ),
+//       ),
+//     );
+//   }
+// }

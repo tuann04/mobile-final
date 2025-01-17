@@ -19,6 +19,12 @@ dependencies:
   logger: ^2.5.0
   scoped_model: ^2.0.0
   fl_chart: ^0.70.1
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+  geolocator: ^13.0.2
+  url_launcher: ^6.3.1
+  share_plus: ^10.1.4
+  rive: ^0.13.20
   flutter_local_notifications: ^13.0.0
   timezone: ^0.9.0
   flutter_datetime_picker_plus: ^2.0.1
@@ -34,3 +40,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+    - assets/runner.riv
