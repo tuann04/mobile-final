@@ -49,6 +49,21 @@
 	<key>NSMotionUsageDescription</key>
 	<string>The application requires access to the motion sensor to count your steps.</string>
 
+ 	<key>NSMotionUsageDescription</key>
+    <string>The application requires access to the motion sensor to count your steps.</string>
+
+    <!-- Location Permissions -->
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>The application needs your location while it is in use to track activity accurately.</string>
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>The application requires continuous location access for background activity tracking.</string>
+
+    <!-- Notifications Permission -->
+    <key>NSUserNotificationUsageDescription</key>
+    <string>This application sends notifications to keep you informed about your activity progress.</string>
+
+
+    <!-- Background Modes -->
 	<key>UIBackgroundModes</key>
 	<array>
     	<string>processing</string>
