@@ -49,3 +49,5 @@ flutter:
       ios:
         package: flutter_local_notifications
         pluginClass: FlutterLocalNotificationsPlugin
+      linux:
+        default_package: flutter_local_notifications_linux

@@ -1,0 +1,7 @@
+tavily-python
+google-generativeai
+python-dotenv
+pydantic
+fastapi
+uvicorn
+ngrok
