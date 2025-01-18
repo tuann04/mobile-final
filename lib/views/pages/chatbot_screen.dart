@@ -19,7 +19,7 @@ class _HieuScreenState extends State<HieuScreen> {
     String userMessage = _controller.text.trim();
     if (userMessage.isEmpty) {
       setState(() {
-        _messages.add({"role": "bot", "text": "Tin nhắn không được để trống."});
+        _messages.add({"role": "bot", "text": "Your message is empty."});
       });
       return;
     }
@@ -44,14 +44,13 @@ class _HieuScreenState extends State<HieuScreen> {
         Map<String, dynamic> responseData =
             jsonDecode(utf8.decode(response.bodyBytes));
         String botReply =
-            responseData["response"] ?? "Phản hồi rỗng từ server.";
+            responseData["response"] ?? "Server response is empty.";
         setState(() {
           _messages.add({"role": "bot", "text": botReply});
         });
       } else {
         setState(() {
-          _messages.add(
-              {"role": "bot", "text": "Lỗi server. Vui lòng thử lại sau."});
+          _messages.add({"role": "bot", "text": "Internal server error."});
         });
       }
     } catch (e) {
@@ -71,7 +70,7 @@ class _HieuScreenState extends State<HieuScreen> {
             Icon(Icons.local_hospital, color: Colors.white),
             SizedBox(width: 10),
             Text(
-              "Tư vấn sức khỏe",
+              "Personal health assistant",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             ),
           ],
@@ -152,7 +151,7 @@ class _HieuScreenState extends State<HieuScreen> {
                   child: TextField(
                     controller: _controller,
                     decoration: InputDecoration(
-                      hintText: "Nhập tin nhắn...",
+                      hintText: "Type your message...",
                       prefixIcon: Icon(Icons.chat, color: Color(0xFF00c853)),
                       filled: true,
                       fillColor: Colors.black54,

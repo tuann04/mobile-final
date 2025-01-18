@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:health_app/view_models/step_counter_view_model.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'views/pages/step_counter_screen.dart';
-import 'views/pages/tuan.dart';
-import 'views/pages/nguyen.dart';
-import 'views/pages/hieu.dart';
+import 'views/pages/running_screen.dart';
+import 'views/pages/notifier_screen.dart';
+import 'views/pages/chatbot_screen.dart';
 import 'services/notify_service.dart';
 import 'services/drink_notify_service.dart';
 // import logger
@@ -133,37 +133,14 @@ class HomePageState extends State<HomePage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.alarm),
-            label: 'Thong bao',
+            label: 'Set notification',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.chat),
-            label: 'Tro chuyen',
+            label: 'Chat',
           ),
         ],
       ),
     );
   }
 }
-
-// import 'package:flutter/material.dart';
-// import 'package:rive/rive.dart';
-
-// void main() => runApp(MaterialApp(
-//       home: MyRiveAnimation(),
-//     ));
-
-// class MyRiveAnimation extends StatelessWidget {
-//   const MyRiveAnimation({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return const Scaffold(
-//       body: Center(
-//         child: RiveAnimation.asset(
-//           'assets/runner.riv',
-//           fit: BoxFit.cover,
-//         ),
-//       ),
-//     );
-//   }
-// }
