@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class HieuScreen extends StatefulWidget {
-  const HieuScreen({Key? key}) : super(key: key);
+  const HieuScreen({super.key});
 
   @override
   _HieuScreenState createState() => _HieuScreenState();
@@ -12,7 +12,8 @@ class HieuScreen extends StatefulWidget {
 class _HieuScreenState extends State<HieuScreen> {
   final TextEditingController _controller = TextEditingController();
   final List<Map<String, String>> _messages = [];
-  final String endpoint = "https://mullet-immortal-labrador.ngrok-free.app/health_ask";
+  final String endpoint =
+      "https://mullet-immortal-labrador.ngrok-free.app/health_ask";
 
   Future<void> _sendMessage() async {
     String userMessage = _controller.text.trim();
@@ -34,7 +35,7 @@ class _HieuScreenState extends State<HieuScreen> {
       var response = await http.post(
         Uri.parse(endpoint),
         headers: {"Content-Type": "application/json; charset=utf-8"},
-        body: jsonEncode({'query':userMessage}),    
+        body: jsonEncode({'query': userMessage}),
       );
 
       if (response.statusCode == 200) {
@@ -42,19 +43,21 @@ class _HieuScreenState extends State<HieuScreen> {
         // server return dictionary or MAP với key là 'response', value type string
         Map<String, dynamic> responseData =
             jsonDecode(utf8.decode(response.bodyBytes));
-        String botReply = responseData["response"] ?? "Phản hồi rỗng từ server.";
+        String botReply =
+            responseData["response"] ?? "Phản hồi rỗng từ server.";
         setState(() {
           _messages.add({"role": "bot", "text": botReply});
         });
       } else {
         setState(() {
-          _messages.add({"role": "bot", "text": "Lỗi server. Vui lòng thử lại sau."});
+          _messages.add(
+              {"role": "bot", "text": "Lỗi server. Vui lòng thử lại sau."});
         });
       }
     } catch (e) {
       setState(() {
         String errorMessage = e.toString();
-        _messages.add({"role": "bot", "text": errorMessage}); 
+        _messages.add({"role": "bot", "text": errorMessage});
       });
     }
   }
@@ -63,7 +66,6 @@ class _HieuScreenState extends State<HieuScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.teal,
         title: Row(
           children: [
             Icon(Icons.local_hospital, color: Colors.white),
@@ -81,7 +83,7 @@ class _HieuScreenState extends State<HieuScreen> {
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.grey[200],
+                color: Colors.black54,
               ),
               child: ListView.builder(
                 padding: EdgeInsets.all(10),
@@ -90,28 +92,35 @@ class _HieuScreenState extends State<HieuScreen> {
                   final message = _messages[index];
                   bool isUser = message['role'] == 'user';
                   return Align(
-                    alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+                    alignment:
+                        isUser ? Alignment.centerRight : Alignment.centerLeft,
                     child: Row(
-                      mainAxisAlignment:
-                          isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+                      mainAxisAlignment: isUser
+                          ? MainAxisAlignment.end
+                          : MainAxisAlignment.start,
                       children: [
                         if (!isUser)
                           CircleAvatar(
-                            backgroundColor: Colors.teal,
-                            child: Icon(Icons.health_and_safety, color: Colors.white),
+                            backgroundColor: Color(0xFF00c853),
+                            child: Icon(Icons.health_and_safety,
+                                color: Colors.black),
                           ),
                         SizedBox(width: 10),
                         Container(
                           margin: EdgeInsets.symmetric(vertical: 5),
                           padding: EdgeInsets.all(12),
-                          constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.7),
+                          constraints: BoxConstraints(
+                              maxWidth:
+                                  MediaQuery.of(context).size.width * 0.7),
                           decoration: BoxDecoration(
-                            color: isUser ? Colors.teal[200] : Colors.white,
+                            color: isUser ? Color(0xFF00c853) : Colors.white,
                             borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(12),
                               topRight: Radius.circular(12),
-                              bottomLeft: isUser ? Radius.circular(12) : Radius.zero,
-                              bottomRight: isUser ? Radius.zero : Radius.circular(12),
+                              bottomLeft:
+                                  isUser ? Radius.circular(12) : Radius.zero,
+                              bottomRight:
+                                  isUser ? Radius.zero : Radius.circular(12),
                             ),
                             boxShadow: [
                               BoxShadow(
@@ -123,7 +132,8 @@ class _HieuScreenState extends State<HieuScreen> {
                           ),
                           child: Text(
                             message['text']!,
-                            style: TextStyle(fontSize: 16, color: Colors.black87),
+                            style:
+                                TextStyle(fontSize: 16, color: Colors.black87),
                           ),
                         ),
                       ],
@@ -134,7 +144,7 @@ class _HieuScreenState extends State<HieuScreen> {
             ),
           ),
           Container(
-            color: Colors.white,
+            color: Colors.black,
             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
             child: Row(
               children: [
@@ -143,21 +153,25 @@ class _HieuScreenState extends State<HieuScreen> {
                     controller: _controller,
                     decoration: InputDecoration(
                       hintText: "Nhập tin nhắn...",
-                      prefixIcon: Icon(Icons.chat, color: Colors.teal),
+                      prefixIcon: Icon(Icons.chat, color: Color(0xFF00c853)),
                       filled: true,
-                      fillColor: Colors.white,
-                      contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      fillColor: Colors.black54,
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(25),
-                        borderSide: BorderSide(color: Colors.teal, width: 1.5),
+                        borderSide:
+                            BorderSide(color: Color(0xFF00c853), width: 1.5),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(25),
-                        borderSide: BorderSide(color: Colors.teal, width: 1.5),
+                        borderSide:
+                            BorderSide(color: Color(0xFF00c853), width: 1.5),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(25),
-                        borderSide: BorderSide(color: Colors.teal, width: 2),
+                        borderSide:
+                            BorderSide(color: Color(0xFF00c853), width: 2),
                       ),
                     ),
                   ),
@@ -166,7 +180,7 @@ class _HieuScreenState extends State<HieuScreen> {
                 ElevatedButton(
                   onPressed: _sendMessage,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal,
+                    backgroundColor: Color(0xFF00c853),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(25),
                     ),
