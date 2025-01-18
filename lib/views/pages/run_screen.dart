@@ -167,7 +167,7 @@ class _TuanScreenState extends State<TuanScreen> {
     return Stack(children: [
       Scaffold(
         appBar: AppBar(
-          title: Text('Running Tracker'),
+          title: Text('Run Tracker'),
           centerTitle: true,
         ),
         body: Column(

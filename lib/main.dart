@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:health_app/view_models/step_counter_view_model.dart';
 import 'views/pages/step_counter_screen.dart';
-import 'views/pages/tuan.dart';
+import 'views/pages/run_screen.dart';
 import 'views/pages/nguyen.dart';
-import 'views/pages/hieu.dart';
+import 'views/pages/chat_screen.dart';
 // import logger
 import 'package:logger/logger.dart';
 
@@ -126,11 +126,11 @@ class HomePageState extends State<HomePage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.alarm),
-            label: 'Thong bao',
+            label: 'Set notification',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.chat),
-            label: 'Tro chuyen',
+            label: 'Chat',
           ),
         ],
       ),
@@ -138,7 +138,7 @@ class HomePageState extends State<HomePage> {
   }
 }
 
-// import 'package:flutter/material.dart';
+// import 'package:flutter/material.dart';x`
 // import 'package:rive/rive.dart';
 
 // void main() => runApp(MaterialApp(
