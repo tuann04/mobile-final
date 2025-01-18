@@ -62,36 +62,79 @@ class _HieuScreenState extends State<HieuScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Trò chuyện với Hiếu"),
+        backgroundColor: Colors.teal,
+        title: Row(
+          children: [
+            Icon(Icons.local_hospital, color: Colors.white),
+            SizedBox(width: 10),
+            Text(
+              "Tư vấn sức khỏe",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            ),
+          ],
+        ),
+        centerTitle: true,
       ),
       body: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              itemCount: _messages.length,
-              itemBuilder: (context, index) {
-                final message = _messages[index];
-                bool isUser = message['role'] == 'user';
-                return Align(
-                  alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-                  child: Container(
-                    margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                    padding: EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: isUser ? Colors.blue[200] : Colors.grey[300],
-                      borderRadius: BorderRadius.circular(10),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+              ),
+              child: ListView.builder(
+                padding: EdgeInsets.all(10),
+                itemCount: _messages.length,
+                itemBuilder: (context, index) {
+                  final message = _messages[index];
+                  bool isUser = message['role'] == 'user';
+                  return Align(
+                    alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+                    child: Row(
+                      mainAxisAlignment:
+                          isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+                      children: [
+                        if (!isUser)
+                          CircleAvatar(
+                            backgroundColor: Colors.teal,
+                            child: Icon(Icons.health_and_safety, color: Colors.white),
+                          ),
+                        SizedBox(width: 10),
+                        Container(
+                          margin: EdgeInsets.symmetric(vertical: 5),
+                          padding: EdgeInsets.all(12),
+                          constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.7),
+                          decoration: BoxDecoration(
+                            color: isUser ? Colors.teal[200] : Colors.white,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(12),
+                              topRight: Radius.circular(12),
+                              bottomLeft: isUser ? Radius.circular(12) : Radius.zero,
+                              bottomRight: isUser ? Radius.zero : Radius.circular(12),
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.2),
+                                spreadRadius: 2,
+                                blurRadius: 5,
+                              ),
+                            ],
+                          ),
+                          child: Text(
+                            message['text']!,
+                            style: TextStyle(fontSize: 16, color: Colors.black87),
+                          ),
+                        ),
+                      ],
                     ),
-                    child: Text(
-                      message['text']!,
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
+          Container(
+            color: Colors.white,
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
             child: Row(
               children: [
                 Expanded(
@@ -99,14 +142,36 @@ class _HieuScreenState extends State<HieuScreen> {
                     controller: _controller,
                     decoration: InputDecoration(
                       hintText: "Nhập tin nhắn...",
-                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.chat, color: Colors.teal),
+                      filled: true,
+                      fillColor: Colors.white,
+                      contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25),
+                        borderSide: BorderSide(color: Colors.teal, width: 1.5),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25),
+                        borderSide: BorderSide(color: Colors.teal, width: 1.5),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25),
+                        borderSide: BorderSide(color: Colors.teal, width: 2),
+                      ),
                     ),
                   ),
                 ),
                 SizedBox(width: 10),
                 ElevatedButton(
                   onPressed: _sendMessage,
-                  child: Text("Gửi"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.teal,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  ),
+                  child: Icon(Icons.send, color: Colors.white),
                 ),
               ],
             ),
