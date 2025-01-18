@@ -28,9 +28,10 @@ app = FastAPI(lifespan = lifespan)
 origins = [
     "http://localhost",
     "http://localhost:8080/",
-    "http://localhost:8000/",
+    "http://localhost:62948/",
     "http://127.0.0.1:8000/",
-    "http://127.0.0.1:8000"
+    "http://127.0.0.1:8000",
+    "https://mullet-immortal-labrador.ngrok-free.app"
 ]
 app.add_middleware(CORSMiddleware, 
                    allow_origins=["*"], 
@@ -40,7 +41,7 @@ app.add_middleware(CORSMiddleware,
                    )
 
 @app.post("/health_ask", response_class=JSONResponse)
-async def main_router(query: Annotated[str, Body()], request: Request):
+async def main_router(request: Request):
     """
     - **Main router for answering question**
     - **Args:** 
@@ -50,9 +51,14 @@ async def main_router(query: Annotated[str, Body()], request: Request):
     - **Example of query:**
         - query = Dấu hiệu bệnh ung thư là gì? những bệnh ung thư phổ biến nào tại Việt Nam?
     """
+    
+    body_data = await request.json()
+    print('body: ', body_data)
+
+    query = body_data['query']
     try:
         agent_response = request.app.agent(query)
-        return JSONResponse(status_code= 200, content= agent_response)
+        return JSONResponse(status_code= 200, content= {'response': agent_response})
     except Exception as e:
         return JSONResponse(status_code= 500, content= 'server error')
 

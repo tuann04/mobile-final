@@ -76,7 +76,7 @@ class Agent(object):
     def final_processing(self, reponse: List[Dict[str,str]])->str:
         return "\n".join([ele['answer'] for ele in reponse])
 
-    def __call__(self, prompt_data:str)->List[str]:
+    def __call__(self, prompt_data:str)->str:
         # step 0
         init_prompt = self.intent_prompt.format(input_prompt = prompt_data)
 

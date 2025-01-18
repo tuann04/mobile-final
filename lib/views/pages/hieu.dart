@@ -34,11 +34,12 @@ class _HieuScreenState extends State<HieuScreen> {
       var response = await http.post(
         Uri.parse(endpoint),
         headers: {"Content-Type": "application/json; charset=utf-8"},
-        body: jsonEncode(userMessage),
+        body: jsonEncode({'query':userMessage}),    
       );
 
       if (response.statusCode == 200) {
-        // Parse phản hồi từ JSON và giải mã UTF-8
+        // Parse phản hồi từ JSON và giải mã UTF-8,
+        // server return dictionary or MAP với key là 'response', value type string
         Map<String, dynamic> responseData =
             jsonDecode(utf8.decode(response.bodyBytes));
         String botReply = responseData["response"] ?? "Phản hồi rỗng từ server.";
@@ -52,7 +53,7 @@ class _HieuScreenState extends State<HieuScreen> {
       }
     } catch (e) {
       setState(() {
-        String errorMessage = e.toString().substring(12, e.toString().length - 64);
+        String errorMessage = e.toString();
         _messages.add({"role": "bot", "text": errorMessage}); 
       });
     }
