@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:health_app/view_models/step_counter_view_model.dart';
 import 'views/pages/step_counter_screen.dart';
-import 'views/pages/tuan.dart';
-import 'views/pages/nguyen.dart';
-import 'views/pages/hieu.dart';
+import 'views/pages/run_screen.dart';
+import 'views/pages/noti_screen.dart';
+import 'views/pages/chat_screen.dart';
+import 'services/notify_service.dart';
+import 'services/drink_notify_service.dart';
+import 'package:timezone/data/latest.dart' as tz;
 // import logger
 import 'package:logger/logger.dart';
 
@@ -12,7 +15,14 @@ final logger = Logger();
 
 final StepCounterViewModel stepCounterViewModel = StepCounterViewModel();
 
+final drinkNotificationService = DrinkNotificationService();
+final sleepNotificationService = NotificationService();
+
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  drinkNotificationService.initNotification();
+  sleepNotificationService.initNotification();
+  tz.initializeTimeZones();
   runApp(MyApp());
 }
 
@@ -126,11 +136,11 @@ class HomePageState extends State<HomePage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.alarm),
-            label: 'Thong bao',
+            label: 'Sleep and Drink',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.chat),
-            label: 'Tro chuyen',
+            label: 'Chat',
           ),
         ],
       ),
@@ -138,7 +148,7 @@ class HomePageState extends State<HomePage> {
   }
 }
 
-// import 'package:flutter/material.dart';
+// import 'package:flutter/material.dart';x`
 // import 'package:rive/rive.dart';
 
 // void main() => runApp(MaterialApp(
