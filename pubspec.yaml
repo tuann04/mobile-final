@@ -25,6 +25,10 @@ dependencies:
   url_launcher: ^6.3.1
   share_plus: ^10.1.4
   rive: ^0.13.20
+  flutter_local_notifications: ^13.0.0
+  timezone: ^0.9.0
+  fluttertoast: ^8.0.9
+  intl: ^0.18.0
 
 dev_dependencies:
   flutter_test:
