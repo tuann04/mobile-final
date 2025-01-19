@@ -19,6 +19,7 @@ class _NguyenScreenState extends State<NguyenScreen> with TickerProviderStateMix
   final ValueNotifier<bool> isTimeChanged = ValueNotifier<bool>(false);
   int sleepStreak = 0;
   int numberOfDrinks = 3;
+  int bestStreak = 0;
   DateTime drinkStartTime = DateTime.now();
   DateTime drinkEndTime = DateTime.now().add(Duration(hours: 3));
   final TextEditingController _startTimeController = TextEditingController();
@@ -35,8 +36,16 @@ class _NguyenScreenState extends State<NguyenScreen> with TickerProviderStateMix
     super.didChangeDependencies();
     _loadScheduledTime();
     _loadSleepStreak();
+    _loadBestStreak();
     _startTimeController.text = TimeOfDay.fromDateTime(drinkStartTime).format(context);
     _endTimeController.text = TimeOfDay.fromDateTime(drinkEndTime).format(context);
+  }
+
+  Future<void> _loadBestStreak() async {
+    final streak = await NotificationService().getBestStreak();
+    setState(() {
+      bestStreak = streak;
+    });
   }
 
   Future<void> _loadScheduledTime() async {
@@ -58,6 +67,10 @@ class _NguyenScreenState extends State<NguyenScreen> with TickerProviderStateMix
   void _increaseSleepStreak() async {
     setState(() {
       sleepStreak++;
+      if (sleepStreak > bestStreak) {
+        bestStreak = sleepStreak;
+        NotificationService().saveBestStreak(bestStreak);
+      }
     });
     await NotificationService().saveSleepStreak(sleepStreak);
   }
@@ -221,6 +234,8 @@ class _NguyenScreenState extends State<NguyenScreen> with TickerProviderStateMix
                 ),
                 SizedBox(height: 30),
                 Text('Sleep Streak: $sleepStreak', style: const TextStyle(fontSize: 18)),
+                SizedBox(height: 10),
+                Text('Best Streak: $bestStreak', style: const TextStyle(fontSize: 18)),
                 SizedBox(height: 30),
                 ElevatedButton(
                   onPressed: _increaseSleepStreak,

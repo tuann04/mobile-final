@@ -12,7 +12,7 @@ class NotificationService {
 
   Future<void> initNotification() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
-    AndroidInitializationSettings('@drawable/sleep.png');
+    AndroidInitializationSettings('@mipmap/ic_launcher');
     var initializationSettingsIOS = DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
@@ -31,6 +31,16 @@ class NotificationService {
 
     // Request permissions
     await _requestPermissions();
+  }
+
+  Future<void> saveBestStreak(int bestStreak) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('bestStreak', bestStreak);
+  }
+
+  Future<int> getBestStreak() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('bestStreak') ?? 0;
   }
 
   Future<void> _requestPermissions() async {
