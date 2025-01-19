@@ -27,7 +27,7 @@ String formatDuration(int seconds) {
   final hours = seconds ~/ 3600;
   final minutes = (seconds % 3600) ~/ 60;
   final remainingSeconds = seconds % 60;
-  return '${hours > 0 ? '${hours}hr' : ''}${minutes > 0 ? '${minutes}m' : ''}${remainingSeconds > 0 ? '${remainingSeconds}s' : ''}';
+  return '${hours > 0 ? '${hours}hr' : ''}${minutes > 0 ? '${minutes}m' : '0m'}${remainingSeconds > 0 ? '${remainingSeconds}s' : '0s'}';
 }
 
 // from meters to "1.22"

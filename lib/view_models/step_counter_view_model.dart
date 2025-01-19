@@ -8,7 +8,7 @@ import 'package:logger/logger.dart';
 
 final logger = Logger();
 
-class StepCounterViewModel extends ChangeNotifier {
+class StepCounterViewModel extends Model {
   final StepCounterRepository _repository = StepCounterRepository.instance;
 
   // State variables
@@ -76,5 +76,6 @@ class StepCounterViewModel extends ChangeNotifier {
     fetchWeeklyStepsData();
     fetchMonthlyStepsData(DateTime.now().year, DateTime.now().month);
     fetchYearlyStepsData(DateTime.now().year);
+    notifyListeners();
   }
 }
