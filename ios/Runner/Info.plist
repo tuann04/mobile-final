@@ -58,5 +58,17 @@
 	<key>io.flutter.embedded_views_preview</key>
 	<true/>
 	
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app needs access to location when open to track your walking/running route.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>This app needs access to location when in the background to track your walking/running route.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app needs access to location when open and in the background to track your walking/running route.</string>
+
+	<key>NSLocationTemporaryUsageDescriptionDictionary</key>
+	<dict>
+		<key>YourPurposeKey</key>
+		<string>The Health App requires temporary access to the device's precise location to show your current location on the map.</string>
+	</dict>
 </dict>
 </plist>

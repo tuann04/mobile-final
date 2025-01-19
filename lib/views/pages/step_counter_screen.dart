@@ -35,7 +35,7 @@ class StepCounterScreenState extends State<StepCounterScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     _todayStepData = widget.viewModel.todayStepsData;
     _weeklyStepData = widget.viewModel.weeklyStepsData;
     _monthlyStepData = widget.viewModel.monthlyStepsData;
@@ -55,9 +55,9 @@ class StepCounterScreenState extends State<StepCounterScreen>
                 Tab(text: 'Today'),
                 Tab(text: 'Monthly'),
                 Tab(text: 'Yearly'),
-                Tab(
-                  text: 'Debug',
-                )
+                // Tab(
+                //   text: 'Debug',
+                // )
               ],
             ),
           ],
@@ -69,12 +69,9 @@ class StepCounterScreenState extends State<StepCounterScreen>
           StepCounterWidget(
             viewModel: widget.viewModel,
           ),
-          StepCounterMonthlyTab(monthlyStepData: _monthlyStepData),
-          StepCounterYearlyTab(
-            yearlyStepData: _yearlyStepData,
-            getMonthName: getMonthName,
-          ),
-          DebugScreen()
+          StepCounterMonthlyTab(viewModel: widget.viewModel),
+          StepCounterYearlyTab(viewModel: widget.viewModel),
+          // DebugScreen()
         ],
       ),
     );

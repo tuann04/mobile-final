@@ -26,10 +26,14 @@ class StepCounterWidget extends StatefulWidget {
 class StepCounterWidgetState extends State<StepCounterWidget> {
   late Stream<StepCount> _stepCountStream;
   late Stream<PedestrianStatus> _pedestrianStatusStream;
+  Timer? _timer;
+
   String _status = 'Stopped';
+
   bool _isStarted = false;
   int _initialSteps = 0;
   bool _isInitialized = false;
+
   int _steps = 0;
   double _distance = 0.0;
   int _duration = 0;
@@ -40,6 +44,7 @@ class StepCounterWidgetState extends State<StepCounterWidget> {
   @override
   void initState() {
     super.initState();
+    initPlatformState();
     _steps = _todayStepData.steps;
     _calories = _todayStepData.calories;
     _duration = _todayStepData.duration;
@@ -58,8 +63,14 @@ class StepCounterWidgetState extends State<StepCounterWidget> {
       if (_isStarted) {
         _isStarted = false;
         _isInitialized = false;
+        _timer?.cancel();
       } else {
         _isStarted = true;
+        _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+          setState(() {
+            _duration++;
+          });
+        });
       }
     });
   }
@@ -111,6 +122,11 @@ class StepCounterWidgetState extends State<StepCounterWidget> {
         .onError(onPedestrianStatusError);
   }
 
+  void disposePlatformState() {
+    _stepCountStream.listen(null).onError(null);
+    _pedestrianStatusStream.listen(null).onError(null);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -136,9 +152,8 @@ class StepCounterWidgetState extends State<StepCounterWidget> {
                     CustomPaint(
                       size: Size(300, 300),
                       painter: CircleProgressPainter(
-                        progress: _steps / 200, // Assuming 200 steps goal
-                        color: Color(0xFF64FFDA),
-                      ),
+                          progress: _steps / 200, // Assuming 200 steps goal
+                          color: cyanColor),
                     ),
                     Container(
                       decoration: BoxDecoration(
@@ -202,21 +217,21 @@ class StepCounterWidgetState extends State<StepCounterWidget> {
                     ),
                     _buildStat(
                       Icons.local_fire_department,
-                      _calories.toString(),
+                      formatCalories(_calories),
                       'Calories',
                       Colors.red,
                     ),
                   ],
                 ),
                 SizedBox(height: 40),
-                Text(
-                  'Weekly Goals',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                // Text(
+                //   'Weekly Goals',
+                //   style: TextStyle(
+                //     color: Colors.white,
+                //     fontSize: 20,
+                //     fontWeight: FontWeight.bold,
+                //   ),
+                // ),
                 // SizedBox(height: 20),
                 // _buildWeeklyGoals(),
               ],
@@ -254,6 +269,9 @@ class StepCounterWidgetState extends State<StepCounterWidget> {
   @override
   void dispose() {
     super.dispose();
+    _timer?.cancel();
+
+    disposePlatformState();
     widget.viewModel.saveTodayStepsData(StepData(
       id: _todayStepData.id,
       steps: _steps,
