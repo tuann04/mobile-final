@@ -146,10 +146,10 @@ class _TuanScreenState extends State<TuanScreen> {
     }
   }
 
-  Future<void> lauchSpotify() async {
-    final url = Uri.parse('https://open.spotify.com');
-    if (!await launchUrl(url)) {
-      throw Exception('Could not launch $url');
+  Future<void> launchSpotify() async {
+    final url = Uri.parse('spotify:'); // Spotify app scheme
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      throw Exception('Could not launch Spotify app');
     }
   }
 
@@ -269,7 +269,7 @@ class _TuanScreenState extends State<TuanScreen> {
                       children: [
                         SizedBox(height: 16),
                         GestureDetector(
-                          onTap: lauchSpotify,
+                          onTap: launchSpotify,
                           child: Text(
                             '🎵 Play Music on Spotify',
                             style: TextStyle(

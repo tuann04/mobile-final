@@ -1,5 +1,7 @@
+Phạm Minh Tân
 import Flutter
 import UIKit
+import flutter_local_notifications
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -23,7 +25,7 @@ import UIKit
         UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
       }
 
-    GeneratedPluginRegistrant.register(with: self)
+    // GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 }
